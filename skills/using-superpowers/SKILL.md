@@ -73,6 +73,7 @@ These thoughts mean STOP—you're rationalizing:
 | "I'll just do this one thing first" | Check BEFORE doing anything. |
 | "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
 | "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+| "I should use EnterPlanMode / plan mode" | If a loaded skill specifies the next step, follow the skill. EnterPlanMode is a platform default — skills override defaults. |
 
 ## Skill Priority
 

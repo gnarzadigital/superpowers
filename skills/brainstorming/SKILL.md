@@ -58,11 +58,9 @@ After writing the spec document:
 3. If loop exceeds 5 iterations, surface to human for guidance
 
 **Implementation (if continuing):**
-- Ask: "Ready to set up for implementation?"
-- Use superpowers:using-git-worktrees to create isolated workspace
-- **REQUIRED:** Use superpowers:writing-plans to create detailed implementation plan
-  - Do NOT use platform planning features (e.g., EnterPlanMode, plan mode)
-  - Do NOT start implementing directly - the writing-plans skill comes first
+When the user approves the design and wants to build:
+1. **Invoke `superpowers:writing-plans` using the Skill tool.** Not EnterPlanMode. Not plan mode. Not direct implementation. The Skill tool.
+2. After the plan is written, use superpowers:using-git-worktrees to create an isolated workspace for implementation.
 
 ## Key Principles
 
