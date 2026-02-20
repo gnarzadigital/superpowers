@@ -1,58 +1,76 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior."
 ---
 
 # Brainstorming Ideas Into Designs
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+## Overview
+
+Help turn ideas into fully formed designs and specs through natural collaborative dialogue. Scale your effort to the task — a link in a header needs a different process than a new subsystem — but always confirm you understand what the user wants before you build anything.
 
 Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until:
+1. You have stated your understanding of the user's intent
+2. The user has confirmed that understanding
+
+This applies to every task regardless of size. The confirmation can be brief ("I'll add a GitHub icon-link to the header, styled to match the existing theme — sound right?"), but you must get it.
 </HARD-GATE>
 
-## Anti-Pattern: "This Is Too Simple To Need A Design"
+## Anti-Pattern: Skipping Understanding
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+The failure mode is not "too little ceremony." It is jumping to implementation with unchecked assumptions. Simple tasks are where this happens most — you assume you know what the user wants and start editing. Even when you're right about the *what*, you miss preferences about the *how*.
 
 ## Checklist
 
-You MUST create a task for each of these items and complete them in order:
+Create tasks to track the steps you'll execute. For a small change, that might be steps 1–3 only. For a large project, all seven.
 
 1. **Explore project context** — check files, docs, recent commits
 2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-4. **Propose 2-3 approaches** — with trade-offs and your recommendation
+4. **Propose approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit
+6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+
+Steps 1–4 always happen. Steps 5–7 scale to the task. **GATE — when you believe a step can be safely elided, ask the user for permission.** Do not skip silently. For example: "This is straightforward — I don't think we need a design doc. Want me to go straight to planning?"
 
 ## Process Flow
 
 ```dot
 digraph brainstorming {
-    "Explore project context" [shape=box];
-    "Visual questions ahead?" [shape=diamond];
-    "Offer Visual Companion\n(own message, no other content)" [shape=box];
-    "Ask clarifying questions" [shape=box];
-    "Propose 2-3 approaches" [shape=box];
-    "Present design sections" [shape=box];
-    "User approves design?" [shape=diamond];
+    "Explore context" [shape=box];
+    "Visual questions?" [shape=diamond];
+    "Offer Visual Companion" [shape=box];
+    "Understand intent" [shape=box];
+    "User confirms understanding?" [shape=diamond];
+    "Propose approaches" [shape=box];
+    "Present design" [shape=box];
+    "User approves?" [shape=diamond];
+    "Design doc warranted?" [shape=diamond];
+    "Ask user permission\nto elide" [shape=box];
     "Write design doc" [shape=box];
-    "Invoke writing-plans skill" [shape=doublecircle];
+    "Spec review\n(when warranted)" [shape=box];
+    "Invoke writing-plans" [shape=doublecircle];
 
-    "Explore project context" -> "Visual questions ahead?";
-    "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
-    "Visual questions ahead?" -> "Ask clarifying questions" [label="no"];
-    "Offer Visual Companion\n(own message, no other content)" -> "Ask clarifying questions";
-    "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
-    "Present design sections" -> "User approves design?";
-    "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Invoke writing-plans skill";
+    "Explore context" -> "Visual questions?";
+    "Visual questions?" -> "Offer Visual Companion" [label="yes"];
+    "Visual questions?" -> "Understand intent" [label="no"];
+    "Offer Visual Companion" -> "Understand intent";
+    "Understand intent" -> "User confirms understanding?";
+    "User confirms understanding?" -> "Understand intent" [label="no, refine"];
+    "User confirms understanding?" -> "Propose approaches" [label="yes"];
+    "Propose approaches" -> "Present design";
+    "Present design" -> "User approves?";
+    "User approves?" -> "Present design" [label="no, revise"];
+    "User approves?" -> "Design doc warranted?" [label="yes"];
+    "Design doc warranted?" -> "Write design doc" [label="yes"];
+    "Design doc warranted?" -> "Ask user permission\nto elide" [label="no — may be\noverkill"];
+    "Ask user permission\nto elide" -> "Invoke writing-plans";
+    "Write design doc" -> "Spec review\n(when warranted)";
+    "Spec review\n(when warranted)" -> "Invoke writing-plans";
 }
 ```
 
@@ -84,6 +102,30 @@ digraph brainstorming {
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
+## After the Design
+
+**Documentation (when warranted):**
+
+- Write the validated design (spec) to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
+  - (User preferences for spec location override this default)
+- Use elements-of-style:writing-clearly-and-concisely skill if available
+- Commit the design document to git
+- **GATE — for small changes, the design doc may be unnecessary.** Ask the user before skipping it.
+
+**Spec Review Loop (when warranted):**
+After writing the spec document:
+
+1. Dispatch spec-document-reviewer subagent (see spec-document-reviewer-prompt.md)
+2. If Issues Found: fix, re-dispatch, repeat until Approved
+3. If loop exceeds 5 iterations, surface to human for guidance
+
+**GATE — for small changes, the spec review may be unnecessary.** Ask the user before skipping it.
+
+**Implementation:**
+
+- Invoke the writing-plans skill to create a detailed implementation plan
+- Do NOT invoke any other skill. writing-plans is the next step.
+
 **Design for isolation and clarity:**
 
 - Break the system into smaller units that each have one clear purpose, communicate through well-defined interfaces, and can be understood and tested independently
@@ -97,35 +139,14 @@ digraph brainstorming {
 - Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
 - Don't propose unrelated refactoring. Stay focused on what serves the current goal.
 
-## After the Design
-
-**Documentation:**
-
-- Write the validated design (spec) to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
-  - (User preferences for spec location override this default)
-- Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
-
-**Spec Review Loop:**
-After writing the spec document:
-
-1. Dispatch spec-document-reviewer subagent (see spec-document-reviewer-prompt.md)
-2. If Issues Found: fix, re-dispatch, repeat until Approved
-3. If loop exceeds 5 iterations, surface to human for guidance
-
-**Implementation:**
-
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
-
 ## Key Principles
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design, get approval before moving on
-- **Be flexible** - Go back and clarify when something doesn't make sense
+- **One question at a time** — don't overwhelm with multiple questions
+- **Multiple choice preferred** — easier to answer than open-ended when possible
+- **YAGNI ruthlessly** — remove unnecessary features from all designs
+- **Explore alternatives** — propose approaches before settling
+- **Incremental validation** — present, get approval, then move on
+- **Be flexible** — go back and clarify when something doesn't make sense
 
 ## Visual Companion
 
